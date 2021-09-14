@@ -21,7 +21,7 @@ services:
         - proxy_network
         - internal_network
     web:
-      image: chiisa/web-custom:1.0
+      image: chiisa/web-custom:1.1
       depends_on: 
         - mysql
       deploy:
@@ -31,7 +31,7 @@ services:
         - proxy_network
         - internal_network
     proxy:
-      image: chiisa/proxy-custom:1.0
+      image: chiisa/proxy-custom:1.1
       depends_on: 
         - pma
         - web

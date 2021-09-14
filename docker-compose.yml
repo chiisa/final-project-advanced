@@ -24,7 +24,7 @@ services:
       build:
         context: .
         dockerfile: web.Dockerfile #image php7.2-apache
-      image: chiisa/web-custom:1.0
+      image: chiisa/web-custom:1.1
       networks:
         - proxy_network
         - internal_network
@@ -32,7 +32,7 @@ services:
       build:
         context: .
         dockerfile: nginx.Dockerfile #nginx proxy
-      image: chiisa/proxy-custom:1.0
+      image: chiisa/proxy-custom:1.1
       depends_on: 
         - pma
         - web
