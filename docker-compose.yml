@@ -6,7 +6,7 @@ services:
         MYSQL_RANDOM_ROOT_PASSWORD: 1
         MYSQL_DATABASE: dbkuasai
         MYSQL_USER: cilsykuasaiuser
-        MYSQL_PASSWORD: cilsykuasaipassword #ini nanti diganti pakai secret ya
+        MYSQL_PASSWORD: /run/secrets/db_password 
       volumes:
         - mysql-data:/var/lib/mysql
       networks:
@@ -21,9 +21,6 @@ services:
         - proxy_network
         - internal_network
     web:
-      build:
-        context: .
-        dockerfile: web.Dockerfile #image php7.2-apache
       image: chiisa/web-custom:1.0
       depends_on: 
         - mysql
@@ -34,9 +31,6 @@ services:
         - proxy_network
         - internal_network
     proxy:
-      build:
-        context: .
-        dockerfile: nginx.Dockerfile #nginx proxy
       image: chiisa/proxy-custom:1.0
       depends_on: 
         - pma
@@ -50,7 +44,9 @@ services:
       networks: 
       - external_network
       - proxy_network
-
+secrets:
+  db_kuasai_password:
+    external: true
 volumes: 
   mysql-data:
 networks:
