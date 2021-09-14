@@ -1,0 +1,62 @@
+version: '3.1'
+services: 
+    mysql:
+      image: mysql:5.7
+      environment:
+        MYSQL_RANDOM_ROOT_PASSWORD: 1
+        MYSQL_DATABASE: dbkuasai
+        MYSQL_USER: cilsykuasaiuser
+        MYSQL_PASSWORD: cilsykuasaipassword #ini nanti diganti pakai secret ya
+      volumes:
+        - mysql-data:/var/lib/mysql
+      networks:
+        - internal_network
+    pma:
+      image: phpmyadmin/phpmyadmin:4.8.3
+      links:
+        - mysql:db
+      depends_on: 
+        - mysql
+      networks:
+        - proxy_network
+        - internal_network
+    web:
+      build:
+        context: .
+        dockerfile: web.Dockerfile #image php7.2-apache
+      image: chiisa/web-custom:1.0
+      depends_on: 
+        - mysql
+      deploy:
+        restart_policy:
+          condition: on-failure
+      networks:
+        - proxy_network
+        - internal_network
+    proxy:
+      build:
+        context: .
+        dockerfile: nginx.Dockerfile #nginx proxy
+      image: chiisa/proxy-custom:1.0
+      depends_on: 
+        - pma
+        - web
+      deploy:
+        replicas: 3
+        restart_policy:
+          condition: on-failure
+      ports:
+      - '80:80'
+      networks: 
+      - external_network
+      - proxy_network
+
+volumes: 
+  mysql-data:
+networks:
+  internal_network: 
+    driver: overlay
+  proxy_network:
+    driver: overlay
+  external_network:
+    driver: overlay
